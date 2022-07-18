@@ -513,6 +513,15 @@ be fully qualified (i.e., prefixed with their package names).
             if pipeline_description is None:
                 pipeline_description = f"Created with Elyra {__version__} pipeline editor using `{pipeline.source}`."
 
+            # cristiano: obtain the schedule from the 1st operation
+            # each step generates an operation
+            schedule_cron = "@once"
+            ops_list = list(pipeline.operations.values())
+            if len(ops_list) > 0:
+                first_op = ops_list[0]
+                if first_op.schedule_cron is not None:
+                    schedule_cron = first_op.schedule_cron
+
             python_output = template.render(
                 operations_list=ordered_ops,
                 pipeline_name=pipeline_instance_id,
@@ -522,6 +531,7 @@ be fully qualified (i.e., prefixed with their package names).
                 is_paused_upon_creation="False",
                 in_cluster="True",
                 pipeline_description=pipeline_description,
+                schedule_cron=schedule_cron,
             )
 
             # Write to python file and fix formatting

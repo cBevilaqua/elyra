@@ -7,7 +7,8 @@
     "elyra_runtime_image": null,
     "elyra_env_vars": [],
     "elyra_kubernetes_secrets": [],
-    "elyra_mounted_volumes": []
+    "elyra_mounted_volumes": [],
+    "elyra_schedule_cron": ""
   },
   "parameters": [
     {
@@ -33,6 +34,9 @@
     },
     {
       "id": "elyra_mounted_volumes"
+    },
+    {
+      "id": "elyra_schedule_cron"
     }
   ],
   "uihints": {
@@ -134,6 +138,19 @@
           "placeholder": "/mount/path=pvc-name",
           "keyValueEntries": true
         }
+      },
+      {
+        "parameter_ref": "elyra_schedule_cron",
+        "control": "custom",
+        "custom_control_id": "StringControl",
+        "label": { "default": "Schedule (cron)" },
+        "description": {
+          "default": "Execution Schedule (use cron format).",
+          "placement": "on_panel"
+        },
+        "data": {
+          "placeholder": "Schedule (cron)"
+        }
       }
     ],
     "group_info": [
@@ -204,6 +221,11 @@
             "id": "elyra_kubernetes_secrets",
             "type": "controls",
             "parameter_refs": ["elyra_kubernetes_secrets"]
+          },
+          {
+            "id": "elyra_schedule_cron",
+            "type": "controls",
+            "parameter_refs": ["elyra_schedule_cron"]
           }
         ]
       }

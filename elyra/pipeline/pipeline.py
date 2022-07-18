@@ -109,6 +109,7 @@ class Operation(object):
         # Scrub the inputs and outputs lists
         self._component_params["inputs"] = Operation._scrub_list(component_params.get("inputs", []))
         self._component_params["outputs"] = Operation._scrub_list(component_params.get("outputs", []))
+        self._component_params["schedule_cron"] = component_params.get("schedule_cron", "@once")
 
     @property
     def id(self) -> str:
@@ -324,6 +325,10 @@ class GenericOperation(Operation):
     @property
     def gpu(self) -> Optional[str]:
         return self._component_params.get("gpu")
+
+    @property
+    def schedule_cron(self) -> Optional[str]:
+        return self._component_params.get("schedule_cron")
 
     @property
     def kubernetes_secrets(self) -> List["KubernetesSecret"]:
