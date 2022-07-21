@@ -1,5 +1,5 @@
 from airflow import DAG
-from datetime import datetime
+from airflow.utils.dates import days_ago
 
 
 args = {
@@ -10,11 +10,12 @@ dag = DAG(
     '{{ pipeline_name }}',
     default_args=args,
     schedule_interval='{{ schedule_cron }}',
-    start_date=datetime.now(),
+    start_date=days_ago(1),
     description="""
 {{ pipeline_description|replace("\"\"\"", "\\\"\\\"\\\"") }}
     """,
     is_paused_upon_creation={{ is_paused_upon_creation }},
+    catchup=False,
 )
 
 {{ render_secrets_for_cos(cos_secret) }}
