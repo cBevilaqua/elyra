@@ -522,7 +522,7 @@ be fully qualified (i.e., prefixed with their package names).
                 if first_op.schedule_cron is not None:
                     schedule_cron = first_op.schedule_cron
 
-            airflow_service_account_name = "airflow-worker"
+            service_account = "airflow-worker"
 
             python_output = template.render(
                 operations_list=ordered_ops,
@@ -534,7 +534,7 @@ be fully qualified (i.e., prefixed with their package names).
                 in_cluster="True",
                 pipeline_description=pipeline_description,
                 schedule_cron=schedule_cron,
-                service_account_name=airflow_service_account_name
+                service_account=service_account,
             )
 
             # Write to python file and fix formatting
