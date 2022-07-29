@@ -78,7 +78,9 @@ op_{{ operation.id|regex_replace }} = KubernetesPodOperator(name='{{ operation.n
                                                           config_file="{{ kube_config_path }}",
     {% endif %}
                                                           dag=dag,
+    {% if operation.is_generic_operator %}
                                                           service_account_name='{{ service_account }}',
+    {% endif %}
                                                           )
     {% if operation.image_pull_policy %}
         op_{{ operation.id|regex_replace }}.image_pull_policy = '{{ operation.image_pull_policy }}'
