@@ -36,7 +36,9 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 op_{{ operation.id|regex_replace }} = {{ operation.class_name }}(
                                                            task_id='{{ operation.notebook|regex_replace }}',
         {% for param, value in operation.component_params.items() %}
+        {% if param != 'schedule_cron' %}
                                                            {{ param }}={{ value }},
+        {% endif %}
         {% endfor %}
         {% if operation.volumes %}
                                                             executor_config={{ render_executor_config_for_custom_op(operation) }},

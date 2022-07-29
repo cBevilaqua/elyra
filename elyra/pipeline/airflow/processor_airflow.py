@@ -518,9 +518,10 @@ be fully qualified (i.e., prefixed with their package names).
             schedule_cron = "@once"
             ops_list = list(pipeline.operations.values())
             if len(ops_list) > 0:
-                first_op = ops_list[0]
-                if first_op.schedule_cron is not None:
-                    schedule_cron = first_op.schedule_cron
+                for op in ops_list:
+                    if hasattr(op, "schedule_cron"):
+                        schedule_cron = op.schedule_cron
+                        break
 
             service_account = "airflow-worker"
 
