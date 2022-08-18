@@ -27,4 +27,4 @@ echo "Gateway URL: " ${JUPYTER_GATEWAY_URL}
 
 echo "${@: -1}"
 
-exec /usr/local/bin/start-notebook.sh --port=${NB_PORT} --ip=${NB_IP}  $*
+exec /usr/local/bin/start-notebook.sh --ServerApp.tornado_settings="{'headers': {'Content-Security-Policy': 'frame-ancestors self *.zooxsmart.com ', }}" --port=${NB_PORT} --ip=${NB_IP}  $*
