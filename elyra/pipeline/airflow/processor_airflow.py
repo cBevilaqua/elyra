@@ -112,7 +112,15 @@ be fully qualified (i.e., prefixed with their package names).
         runtime_configuration = self._get_metadata_configuration(
             schemaspace=Runtimes.RUNTIMES_SCHEMASPACE_ID, name=pipeline.runtime_config
         )
-        api_endpoint = runtime_configuration.metadata.get("api_endpoint")
+
+        airflow_url = runtime_configuration.metadata.get("api_endpoint")
+        zooxeye_url = os.getenv("ZOOXEYE_URL", None)
+
+        if zooxeye_url is not None:
+            airflow_url = f"{zooxeye_url}/data-prep-jobs?url={airflow_url}"
+
+        # api_endpoint = runtime_configuration.metadata.get("api_endpoint")
+        api_endpoint = airflow_url
         cos_endpoint = runtime_configuration.metadata.get("cos_endpoint")
         cos_bucket = runtime_configuration.metadata.get("cos_bucket")
 
