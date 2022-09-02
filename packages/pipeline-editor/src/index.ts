@@ -362,7 +362,8 @@ const extension: JupyterFrontEndPlugin<void> = {
     runtimesWidget.title.caption = 'Runtimes';
 
     restorer.add(runtimesWidget, runtimesWidgetID);
-    app.shell.add(runtimesWidget, 'left', { rank: 950 });
+    // cristiano (hiding runtimes from sidebar)
+    // app.shell.add(runtimesWidget, 'left', { rank: 950 });
 
     const runtimeImagesWidget = new RuntimeImagesWidget({
       app,
