@@ -75,7 +75,6 @@ op_{{ operation.id|regex_replace }} = KubernetesPodOperator(name='{{ operation.n
                                                           volume_mounts=[{% for mount_var in operation.volume_mount_vars %}{{ mount_var }},{% endfor %}],
     {% endif %}
                                                           in_cluster={{ in_cluster }},
-                                                          config_file="{{ kube_config_path }}",
     {% endif %}
                                                           dag=dag,
     {% if operation.is_generic_operator %}
