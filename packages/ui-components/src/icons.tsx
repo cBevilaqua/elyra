@@ -16,6 +16,7 @@
 
 import { LabIcon } from '@jupyterlab/ui-components';
 
+import calendarSvg from '../style/icons/calendar.svg';
 import clearPipelineSvg from '../style/icons/clear-pipeline.svg';
 import elyraSvg from '../style/icons/codait-piebrainlogo-jupyter-color.svg';
 import codeSnippetSvg from '../style/icons/code-snippet.svg';
@@ -108,6 +109,10 @@ export const viewIcon = new LabIcon({
 export const viewOffIcon = new LabIcon({
   name: 'elyra:viewOff',
   svgstr: viewOffIconSvg
+});
+export const calendarIcon = new LabIcon({
+  name: 'elyra:calendarIcon',
+  svgstr: calendarSvg
 });
 
 /**

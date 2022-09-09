@@ -841,3 +841,7 @@ h4.empty-pipeline-header {
 .empty-pipeline-button .jp-icon3[fill] {
   fill: var(--jp-brand-color1);
 }
+
+.ant-select-dropdown.react-js-cron-select-dropdown {
+  z-index: 10000 !important;
+}

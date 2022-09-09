@@ -32,12 +32,13 @@ import {
   pipelineIcon,
   savePipelineIcon,
   showBrowseFileDialog,
-  runtimesIcon,
+  // runtimesIcon,
   containerIcon,
   Dropzone,
   RequestErrors,
   showFormDialog,
-  componentCatalogIcon
+  componentCatalogIcon,
+  calendarIcon
 } from '@elyra/ui-components';
 import { ILabShell } from '@jupyterlab/application';
 import { Dialog, ReactWidget, showDialog } from '@jupyterlab/apputils';
@@ -85,6 +86,7 @@ import {
   getConfigDetails,
   IRuntimeData
 } from './runtime-utils';
+import { SchedulerDialog } from './SchedulerDialog';
 import { theme } from './theme';
 
 const PIPELINE_CLASS = 'elyra-PipelineEditor';
@@ -578,6 +580,42 @@ const PipelineWrapper: React.FC<IProps> = ({
     }
   };
 
+  const handleScheduler = useCallback(async (): Promise<void> => {
+    const title = 'Configure Scheduler';
+    let cronExpression = '* * * * *';
+    const pipelineJson: any = context.model.toJSON();
+
+    if (
+      pipelineJson.pipelines[0].app_data.properties.pipeline_defaults
+        .schedule_cron
+    ) {
+      cronExpression =
+        pipelineJson.pipelines[0].app_data.properties.pipeline_defaults
+          .schedule_cron;
+    }
+
+    const dialogOptions: Partial<Dialog.IOptions<any>> = {
+      title,
+      body: formDialogWidget(
+        <SchedulerDialog cronExpression={cronExpression} />
+      ),
+      buttons: [Dialog.cancelButton(), Dialog.okButton()],
+      defaultButton: 1
+      // focusNodeSelector: '#pipeline_name'
+    };
+
+    const dialogResult = await showFormDialog(dialogOptions);
+
+    if (dialogResult.value === null) {
+      // When Cancel is clicked on the dialog, just return
+      return;
+    }
+
+    cronExpression = dialogResult.value.cronExpression;
+    pipelineJson.pipelines[0].app_data.properties.pipeline_defaults.schedule_cron = cronExpression;
+    context.model.fromJSON(pipelineJson);
+  }, [context.model]);
+
   const handleSubmission = useCallback(
     async (actionType: 'run' | 'export'): Promise<void> => {
       const pipelineJson: any = context.model.toJSON();
@@ -836,6 +874,9 @@ const PipelineWrapper: React.FC<IProps> = ({
             args.payload.componentSource
           );
           break;
+        case 'configureScheduler':
+          handleScheduler();
+          break;
         default:
           break;
       }
@@ -846,7 +887,8 @@ const PipelineWrapper: React.FC<IProps> = ({
       panelOpen,
       shell,
       commands,
-      handleOpenComponentDef
+      handleOpenComponentDef,
+      handleScheduler
     ]
   );
 
@@ -878,13 +920,13 @@ const PipelineWrapper: React.FC<IProps> = ({
         iconEnabled: IconUtil.encode(clearPipelineIcon),
         iconDisabled: IconUtil.encode(clearPipelineIcon)
       },
-      {
+      /*{
         action: 'openRuntimes',
         label: 'Open Runtimes',
         enable: true,
         iconEnabled: IconUtil.encode(runtimesIcon),
         iconDisabled: IconUtil.encode(runtimesIcon)
-      },
+      },*/
       {
         action: 'openRuntimeImages',
         label: 'Open Runtime Images',
@@ -898,6 +940,13 @@ const PipelineWrapper: React.FC<IProps> = ({
         enable: true,
         iconEnabled: IconUtil.encode(componentCatalogIcon),
         iconDisabled: IconUtil.encode(componentCatalogIcon)
+      },
+      {
+        action: 'configureScheduler',
+        label: 'Configure scheduler',
+        enable: true,
+        iconEnabled: IconUtil.encode(calendarIcon),
+        iconDisabled: IconUtil.encode(calendarIcon)
       },
       { action: 'undo', label: 'Undo' },
       { action: 'redo', label: 'Redo' },

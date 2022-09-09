@@ -186,7 +186,7 @@ export class PipelineService {
         dialogTitle = 'Job submission to ' + runtimeName + ' succeeded';
         dialogBody = (
           <p>
-            {response['platform'] === 'APACHE_AIRFLOW' ? (
+            {/*response['platform'] === 'APACHE_AIRFLOW' ? (
               <p>
                 Apache Airflow DAG has been pushed to the{' '}
                 <a
@@ -198,16 +198,16 @@ export class PipelineService {
                 </a>
                 <br />
               </p>
-            ) : null}
-            Check the status of your job at{' '}
+            ) : null*/}
+            Job successfully submitted{' '}
             <a
               href={response['run_url']}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Run Details.
+              Check it here.
             </a>
-            {response['object_storage_path'] !== null ? (
+            {/*response['object_storage_path'] !== null ? (
               <p>
                 The results and outputs are in the{' '}
                 {response['object_storage_path']} working directory in{' '}
@@ -220,7 +220,7 @@ export class PipelineService {
                 </a>
                 .
               </p>
-            ) : null}
+            ) : null*/}
             <br />
           </p>
         );
