@@ -586,7 +586,7 @@ const PipelineWrapper: React.FC<IProps> = ({
     const pipelineJson: any = context.model.toJSON();
 
     if (
-      pipelineJson.pipelines[0].app_data.properties.pipeline_defaults
+      (pipelineJson.pipelines[0].app_data.properties.pipeline_defaults || {})
         .schedule_cron
     ) {
       cronExpression =
@@ -612,6 +612,11 @@ const PipelineWrapper: React.FC<IProps> = ({
     }
 
     cronExpression = dialogResult.value.cronExpression;
+
+    if (!pipelineJson.pipelines[0].app_data.properties.pipeline_defaults) {
+      pipelineJson.pipelines[0].app_data.properties.pipeline_defaults = {};
+    }
+
     pipelineJson.pipelines[0].app_data.properties.pipeline_defaults.schedule_cron = cronExpression;
     context.model.fromJSON(pipelineJson);
   }, [context.model]);
