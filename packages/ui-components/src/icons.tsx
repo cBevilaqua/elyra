@@ -32,6 +32,7 @@ import pyIconSvg from '../style/icons/py-logo.svg';
 import rIconSvg from '../style/icons/r-logo.svg';
 import runtimesSvg from '../style/icons/runtimes.svg';
 import savePipelineSvg from '../style/icons/save-pipeline.svg';
+import secretsSvg from '../style/icons/secrets.svg';
 import tagIconSvg from '../style/icons/tag.svg';
 import trashIconSvg from '../style/icons/trashIcon.svg';
 import viewOffIconSvg from '../style/icons/view--off.svg';
@@ -113,6 +114,10 @@ export const viewOffIcon = new LabIcon({
 export const calendarIcon = new LabIcon({
   name: 'elyra:calendarIcon',
   svgstr: calendarSvg
+});
+export const secretsIcon = new LabIcon({
+  name: 'elyra:secretsIcon',
+  svgstr: secretsSvg
 });
 
 /**

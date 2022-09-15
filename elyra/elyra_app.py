@@ -19,6 +19,7 @@ from jupyter_server.extension.application import ExtensionApp
 from jupyter_server.extension.application import ExtensionAppJinjaMixin
 
 from elyra._version import __version__
+from elyra.airflow.handlers import AirflowSecretsHandler, AirflowSecretsItemHandler
 from elyra.api.handlers import YamlSpecHandler
 from elyra.contents.handlers import ContentHandler
 from elyra.metadata.handlers import MetadataHandler
@@ -81,6 +82,7 @@ class ElyraApp(ExtensionAppJinjaMixin, ExtensionApp):
         processor_regex = r"(?P<runtime_type>[\w]+)"
         component_regex = r"(?P<component_id>[\w\.\-:%]+)"
         catalog_regex = r"(?P<catalog>[\w\.\-:]+)"
+        airflow_connection_id_regex = r"(?P<airflow_connection_id>[\w\.\-]+)"
 
         self.handlers.extend(
             [
@@ -112,6 +114,8 @@ class ElyraApp(ExtensionAppJinjaMixin, ExtensionApp):
                 (f"/{self.name}/pipeline/runtimes/types", PipelineRuntimeTypesHandler),
                 (f"/{self.name}/pipeline/schedule", PipelineSchedulerHandler),
                 (f"/{self.name}/pipeline/validate", PipelineValidationHandler),
+                (f"/{self.name}/airflow/secrets", AirflowSecretsHandler),
+                (f"/{self.name}/airflow/secrets/{airflow_connection_id_regex}", AirflowSecretsItemHandler),
             ]
         )
 

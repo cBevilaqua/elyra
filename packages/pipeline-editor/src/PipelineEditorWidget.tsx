@@ -38,7 +38,8 @@ import {
   RequestErrors,
   showFormDialog,
   componentCatalogIcon,
-  calendarIcon
+  calendarIcon,
+  secretsIcon
 } from '@elyra/ui-components';
 import { ILabShell } from '@jupyterlab/application';
 import { Dialog, ReactWidget, showDialog } from '@jupyterlab/apputils';
@@ -87,6 +88,7 @@ import {
   IRuntimeData
 } from './runtime-utils';
 import { SchedulerDialog } from './SchedulerDialog';
+import { SecretsDialog } from './SecretsDialog';
 import { theme } from './theme';
 
 const PIPELINE_CLASS = 'elyra-PipelineEditor';
@@ -621,6 +623,68 @@ const PipelineWrapper: React.FC<IProps> = ({
     context.model.fromJSON(pipelineJson);
   }, [context.model]);
 
+  const handleSecrets = useCallback(async (): Promise<void> => {
+    const connectionsResp = await PipelineService.getSecrets();
+    console.log('secrets list>> ', connectionsResp);
+
+    const secrets = [];
+
+    if (
+      connectionsResp &&
+      connectionsResp.airflow_connections &&
+      connectionsResp.airflow_connections.connections &&
+      connectionsResp.airflow_connections.connections.length
+    ) {
+      for (
+        let x = 0;
+        x < connectionsResp.airflow_connections.connections.length;
+        x += 1
+      ) {
+        secrets.push({
+          connection_id:
+            connectionsResp.airflow_connections.connections[x].connection_id
+        });
+      }
+    }
+
+    const dialogOptions: Partial<Dialog.IOptions<any>> = {
+      title: 'Manage Secrets',
+      body: formDialogWidget(<SecretsDialog secrets={secrets} />),
+      buttons: [Dialog.cancelButton(), Dialog.okButton()],
+      defaultButton: 1
+      // focusNodeSelector: '#pipeline_name'
+    };
+
+    const dialogResult = await showFormDialog(dialogOptions);
+    console.log('secrets dialog result >>> ', dialogResult);
+    if (dialogResult.value === null) {
+      return;
+    }
+
+    const secret: any = {
+      connectionType: dialogResult.value.connectionType,
+      connectionId: dialogResult.value.connectionId
+    };
+
+    if (secret.connectionType === 'database') {
+      secret.host = dialogResult.value.host;
+      secret.port = dialogResult.value.port;
+      secret.username = dialogResult.value.username;
+      secret.password = dialogResult.value.password;
+      secret.database = dialogResult.value.database;
+    } else {
+      secret.extra = dialogResult.value.extra;
+    }
+
+    console.log('secret before submitting :::: ', secret);
+
+    const secretResp: any = await PipelineService.createSecret(
+      secret
+    ).catch(error => RequestErrors.serverError(error));
+
+    console.log('secret resp ::: ', secretResp);
+  }, []);
+
   const handleSubmission = useCallback(
     async (actionType: 'run' | 'export'): Promise<void> => {
       const pipelineJson: any = context.model.toJSON();
@@ -882,6 +946,9 @@ const PipelineWrapper: React.FC<IProps> = ({
         case 'configureScheduler':
           handleScheduler();
           break;
+        case 'manageSecrets':
+          handleSecrets();
+          break;
         default:
           break;
       }
@@ -893,7 +960,8 @@ const PipelineWrapper: React.FC<IProps> = ({
       shell,
       commands,
       handleOpenComponentDef,
-      handleScheduler
+      handleScheduler,
+      handleSecrets
     ]
   );
 
@@ -952,6 +1020,13 @@ const PipelineWrapper: React.FC<IProps> = ({
         enable: true,
         iconEnabled: IconUtil.encode(calendarIcon),
         iconDisabled: IconUtil.encode(calendarIcon)
+      },
+      {
+        action: 'manageSecrets',
+        label: 'Manage secrets',
+        enable: true,
+        iconEnabled: IconUtil.encode(secretsIcon),
+        iconDisabled: IconUtil.encode(secretsIcon)
       },
       { action: 'undo', label: 'Undo' },
       { action: 'redo', label: 'Redo' },

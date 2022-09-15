@@ -342,4 +342,24 @@ export class PipelineService {
     }
     return pipeline;
   }
+
+  static async createSecret(secret: any): Promise<void> {
+    console.log('will call api with secret::::: ', secret);
+    return RequestHandler.makePostRequest(
+      'elyra/airflow/secrets',
+      JSON.stringify(secret)
+    );
+  }
+
+  static async getSecrets(): Promise<any> {
+    return RequestHandler.makeGetRequest('elyra/airflow/secrets');
+  }
+
+  static async getSecret(id: string): Promise<any> {
+    return RequestHandler.makeGetRequest(`elyra/airflow/secrets/${id}`);
+  }
+
+  static async deleteSecret(id: string): Promise<any> {
+    return RequestHandler.makeDeleteRequest(`elyra/airflow/secrets/${id}`);
+  }
 }

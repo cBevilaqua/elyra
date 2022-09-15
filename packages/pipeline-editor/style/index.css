@@ -845,3 +845,30 @@ h4.empty-pipeline-header {
 .ant-select-dropdown.react-js-cron-select-dropdown {
   z-index: 10000 !important;
 }
+
+.secrets-input {
+  width: 100%;
+}
+
+.secrets-textarea {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.secrets-table {
+  width: 100%;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.secrets-table th {
+  font-weight: bolder;
+}
+
+.text-align-left {
+  text-align: left;
+}
+
+.delete-secret-btn {
+  cursor: pointer;
+}
