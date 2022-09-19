@@ -323,15 +323,6 @@ const extension: JupyterFrontEndPlugin<void> = {
       })
       .catch(error => RequestErrors.serverError(error));
 
-    // SecretsButtonExtension initialization code
-    const secretsButtonExtension = new SecretsButtonExtension();
-    app.docRegistry.addWidgetExtension('Notebook', secretsButtonExtension);
-    app.contextMenu.addItem({
-      selector: '.jp-Notebook',
-      command: commandIDs.openSecrets,
-      rank: -0.4
-    });
-
     // SubmitNotebookButtonExtension initialization code
     const notebookButtonExtension = new SubmitFileButtonExtension();
     app.docRegistry.addWidgetExtension('Notebook', notebookButtonExtension);
@@ -354,6 +345,15 @@ const extension: JupyterFrontEndPlugin<void> = {
     app.contextMenu.addItem({
       selector: '.elyra-ScriptEditor',
       command: commandIDs.submitScript,
+      rank: -0.5
+    });
+
+    // SecretsButtonExtension initialization code
+    const secretsButtonExtension = new SecretsButtonExtension();
+    app.docRegistry.addWidgetExtension('Notebook', secretsButtonExtension);
+    app.contextMenu.addItem({
+      selector: '.jp-Notebook',
+      command: commandIDs.openSecrets,
       rank: -0.5
     });
 
