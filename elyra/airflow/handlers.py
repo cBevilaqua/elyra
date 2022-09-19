@@ -22,7 +22,7 @@ from elyra.util.http import HttpErrorMixin
 
 
 class AirflowSecretsHandler(HttpErrorMixin, APIHandler):
-    """Handler for secrets CRUD."""
+    """Handler for secrets list and create."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -54,7 +54,7 @@ class AirflowSecretsHandler(HttpErrorMixin, APIHandler):
 
 
 class AirflowSecretsItemHandler(HttpErrorMixin, APIHandler):
-    """Handler for secrets CRUD."""
+    """Handler for secrets get and delete."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

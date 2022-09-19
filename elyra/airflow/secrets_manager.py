@@ -7,16 +7,20 @@ class AirflowSecretsManager:
     @staticmethod
     def get_secret(name):
         secret = AirflowSecretsManager.api_client.get_connection(name)
-        otuput = None
+        if "status" in secret and secret["status"] == 404:
+            return "Secret not found!"
+
+        output = None
+
         if secret["extra"] is not None:
-            output = secret["extra"]
+            return secret["extra"]
         else:
             output = {}
-            otuput["host"] = secret["host"]
-            otuput["port"] = secret["port"]
-            otuput["database"] = secret["database"]
-            otuput["username"] = secret["username"]
-            otuput["password"] = secret["password"]
+            output["host"] = secret["host"]
+            output["port"] = secret["port"]
+            output["database"] = secret["schema"]
+            output["username"] = secret["login"]
+            # output["password"] = secret["password"]
         return output
 
     @staticmethod
@@ -29,7 +33,7 @@ class AirflowSecretsManager:
         data = {
             "connectionId": name,
             "host": host,
-            "port": port,
+            "port": int(port),
             "database": database,
             "username": username,
             "password": password,

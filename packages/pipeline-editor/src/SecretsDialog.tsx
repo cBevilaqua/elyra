@@ -52,23 +52,24 @@ export const SecretsDialog: React.FC<IProps> = ({ secrets }) => {
   };
 
   return (
-    <form className="elyra-dialog-form">
+    <form className="elyra-dialog-form secrets-dialog">
       <div>
-        <label htmlFor="secretTypeSelect">Secret type</label>
-        <select
-          id="secretTypeSelect"
-          name="connectionType"
-          value={selected}
-          onChange={handleChange}
-        >
-          {options.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.text}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
+        <div>
+          <label htmlFor="secretTypeSelect">Secret type</label>
+          <select
+            id="secretTypeSelect"
+            name="connectionType"
+            className="jp-mod-styled"
+            value={selected}
+            onChange={handleChange}
+          >
+            {options.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.text}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <label htmlFor="connectionId">Secret ID</label>
           <br />
@@ -148,31 +149,35 @@ export const SecretsDialog: React.FC<IProps> = ({ secrets }) => {
         )}
       </div>
       <div>
-        <table className="secrets-table">
-          <thead>
-            <tr>
-              <th className="text-align-left">Secret ID</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {secretsList.map(secret => (
-              <tr key={secret.connection_id}>
-                <td className="text-align-left">{secret.connection_id}</td>
-                <td>
-                  <span
-                    className="delete-secret-btn"
-                    onClick={async (): Promise<any> =>
-                      await deleteSecret(secret.connection_id)
-                    }
-                  >
-                    &#10005;
-                  </span>
-                </td>
+        {secretsList && secretsList.length ? (
+          <table className="secrets-table">
+            <thead>
+              <tr>
+                <th className="text-align-left">Secret ID</th>
+                <th>Delete</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {secretsList.map(secret => (
+                <tr key={secret.connection_id}>
+                  <td className="text-align-left">{secret.connection_id}</td>
+                  <td>
+                    <span
+                      className="delete-secret-btn"
+                      onClick={async (): Promise<any> =>
+                        await deleteSecret(secret.connection_id)
+                      }
+                    >
+                      &#10005;
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No secrets added yet</p>
+        )}
       </div>
       <br />
     </form>

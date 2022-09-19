@@ -103,7 +103,8 @@ export const commandIDs = {
   submitNotebook: 'notebook:submit',
   addFileToPipeline: 'pipeline-editor:add-node',
   refreshPalette: 'pipeline-editor:refresh-palette',
-  openViewer: 'elyra-code-viewer:open'
+  openViewer: 'elyra-code-viewer:open',
+  openSecrets: 'secrets:open'
 };
 
 const getAllPaletteNodes = (palette: any): any[] => {
@@ -625,7 +626,6 @@ const PipelineWrapper: React.FC<IProps> = ({
 
   const handleSecrets = useCallback(async (): Promise<void> => {
     const connectionsResp = await PipelineService.getSecrets();
-    console.log('secrets list>> ', connectionsResp);
 
     const secrets = [];
 
@@ -656,7 +656,7 @@ const PipelineWrapper: React.FC<IProps> = ({
     };
 
     const dialogResult = await showFormDialog(dialogOptions);
-    console.log('secrets dialog result >>> ', dialogResult);
+
     if (dialogResult.value === null) {
       return;
     }
@@ -676,13 +676,9 @@ const PipelineWrapper: React.FC<IProps> = ({
       secret.extra = dialogResult.value.extra;
     }
 
-    console.log('secret before submitting :::: ', secret);
-
-    const secretResp: any = await PipelineService.createSecret(
-      secret
-    ).catch(error => RequestErrors.serverError(error));
-
-    console.log('secret resp ::: ', secretResp);
+    await PipelineService.createSecret(secret).catch(error =>
+      RequestErrors.serverError(error)
+    );
   }, []);
 
   const handleSubmission = useCallback(

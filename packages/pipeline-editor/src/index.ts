@@ -57,6 +57,7 @@ import {
   RuntimeImagesWidget
 } from './RuntimeImagesWidget';
 import { RuntimesWidget } from './RuntimesWidget';
+import { SecretsButtonExtension } from './SecretsButtonExtension';
 import { SubmitFileButtonExtension } from './SubmitFileButtonExtension';
 
 import '../style/index.css';
@@ -321,6 +322,15 @@ const extension: JupyterFrontEndPlugin<void> = {
         }
       })
       .catch(error => RequestErrors.serverError(error));
+
+    // SecretsButtonExtension initialization code
+    const secretsButtonExtension = new SecretsButtonExtension();
+    app.docRegistry.addWidgetExtension('Notebook', secretsButtonExtension);
+    app.contextMenu.addItem({
+      selector: '.jp-Notebook',
+      command: commandIDs.openSecrets,
+      rank: -0.4
+    });
 
     // SubmitNotebookButtonExtension initialization code
     const notebookButtonExtension = new SubmitFileButtonExtension();

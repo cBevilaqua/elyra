@@ -27,7 +27,7 @@ class AirflowApiClient:
             "connection_id": data["connectionId"],
             "conn_type": "generic",
             "host": data["host"],
-            "port": data["port"],
+            "port": int(data["port"]),
             "login": data["username"],
             "password": data["password"],
             "schema": data["database"],
@@ -37,7 +37,6 @@ class AirflowApiClient:
         return resp.json()
 
     def create_generic_connection(self, data: dict):
-        # conn = {"connection_id": data["connectionId"], "conn_type": "generic", "extra": json.dumps(data["extra"])}
         conn = {"connection_id": data["connectionId"], "conn_type": "generic", "extra": data["extra"]}
         resp = self.do_request("POST", "connections", conn)
         return resp.json()

@@ -344,7 +344,6 @@ export class PipelineService {
   }
 
   static async createSecret(secret: any): Promise<void> {
-    console.log('will call api with secret::::: ', secret);
     return RequestHandler.makePostRequest(
       'elyra/airflow/secrets',
       JSON.stringify(secret)
