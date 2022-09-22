@@ -43,7 +43,7 @@ data_files_spec = [
 
 runtime_extras = {
     "kfp-tekton": [
-        "kfp-tekton~=1.2.0",
+        "kfp-tekton~=1.3.0",
     ],  # See elyra-ai/elyra/pull/2034 for fix pack pinning
     # Kubeflow Pipelines example components
     # (https://github.com/elyra-ai/examples/tree/main/component-catalog-connectors/kfp-example-components-connector)
@@ -75,7 +75,7 @@ setup_args = dict(
         "jupyter_client>=6.1.7",
         "jupyter-packaging>=0.10",
         "jupyter_server>=1.7.0",
-        "jupyterlab>=3.4.0",  # comment out to use local jupyterlab
+        "jupyterlab>=3.4.6",  # comment out to use local jupyterlab
         "jupyterlab-lsp>=3.8.0",  # comment out to use local jupyterlab
         "jupyterlab-git~=0.32",  # Avoid breaking 1.x changes
         "jupyter-resource-usage>=0.5.1",

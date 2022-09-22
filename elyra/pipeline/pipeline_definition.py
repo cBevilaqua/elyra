@@ -20,6 +20,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Set
+from typing import Union
 
 from jinja2 import Environment
 from jinja2 import PackageLoader
@@ -27,12 +28,16 @@ from jinja2 import Undefined
 
 from elyra.pipeline.component_catalog import ComponentCache
 from elyra.pipeline.pipeline import KeyValueList
+from elyra.pipeline.pipeline import KubernetesAnnotation
 from elyra.pipeline.pipeline import KubernetesSecret
+from elyra.pipeline.pipeline import KubernetesToleration
 from elyra.pipeline.pipeline import Operation
 from elyra.pipeline.pipeline import VolumeMount
 from elyra.pipeline.pipeline_constants import ELYRA_COMPONENT_PROPERTIES
 from elyra.pipeline.pipeline_constants import ENV_VARIABLES
+from elyra.pipeline.pipeline_constants import KUBERNETES_POD_ANNOTATIONS
 from elyra.pipeline.pipeline_constants import KUBERNETES_SECRETS
+from elyra.pipeline.pipeline_constants import KUBERNETES_TOLERATIONS
 from elyra.pipeline.pipeline_constants import MOUNTED_VOLUMES
 from elyra.pipeline.pipeline_constants import PIPELINE_DEFAULTS
 from elyra.pipeline.pipeline_constants import PIPELINE_META_PROPERTIES
@@ -101,12 +106,20 @@ class Pipeline(AppDataBase):
         super().__init__(node)
 
     @property
-    def version(self) -> int:
+    def version(self) -> Union[int, float]:
         """
         The pipeline version
         :return: The version
         """
-        return int(self._node["app_data"].get("version"))
+        version = self._node["app_data"].get("version")
+        if isinstance(version, (int, float)):
+            return version
+
+        try:
+            version = int(version)
+        except ValueError:  # version is not an int
+            version = float(version)
+        return version
 
     @property
     def runtime(self) -> str:
@@ -390,7 +403,8 @@ class Node(AppDataBase):
                 return
 
             # Convert plain list to KeyValueList
-            self.set_component_parameter(kv_property, KeyValueList(value))
+            if kv_property not in self.elyra_properties_to_skip:
+                self.set_component_parameter(kv_property, KeyValueList(value))
 
     def remove_env_vars_with_matching_secrets(self):
         """
@@ -433,6 +447,29 @@ class Node(AppDataBase):
                 secret_objects.append(KubernetesSecret(env_var_name, secret_name.strip(), secret_key))
 
             self.set_component_parameter(KUBERNETES_SECRETS, secret_objects)
+
+        kubernetes_tolerations = self.get_component_parameter(KUBERNETES_TOLERATIONS)
+        if kubernetes_tolerations and isinstance(kubernetes_tolerations, KeyValueList):
+            tolerations_objects = []
+            for toleration, toleration_definition in kubernetes_tolerations.to_dict().items():
+                # A definition comprises of "<key>:<operator>:<value>:<effect>"
+                parts = toleration_definition.split(":")
+                key, operator, value, effect = (parts + [""] * 4)[:4]
+                # Create a KubernetesToleration class instance and add to list
+                # Note that the instance might be invalid.
+                tolerations_objects.append(KubernetesToleration(key, operator, value, effect))
+
+            self.set_component_parameter(KUBERNETES_TOLERATIONS, tolerations_objects)
+
+        kubernetes_pod_annotations = self.get_component_parameter(KUBERNETES_POD_ANNOTATIONS)
+        if kubernetes_pod_annotations and isinstance(kubernetes_pod_annotations, KeyValueList):
+            annotations_objects = []
+            for annotation_key, annotation_value in kubernetes_pod_annotations.to_dict().items():
+                # Validation should have verified that the provided values are valid
+                # Create a KubernetesAnnotation class instance and add to list
+                annotations_objects.append(KubernetesAnnotation(annotation_key, annotation_value))
+
+            self.set_component_parameter(KUBERNETES_POD_ANNOTATIONS, annotations_objects)
 
 
 class PipelineDefinition(object):
@@ -623,6 +660,12 @@ class PipelineDefinition(object):
                 if not pipeline_default_value:
                     continue
 
+                if not Operation.is_generic_operation(node.op) and (
+                    property_name not in ELYRA_COMPONENT_PROPERTIES or property_name in node.elyra_properties_to_skip
+                ):
+                    # Do not propagate default properties that do not apply to custom components, e.g. runtime image
+                    continue
+
                 node_value = node.get_component_parameter(property_name)
                 if not node_value:
                     node.set_component_parameter(property_name, pipeline_default_value)
@@ -739,13 +782,10 @@ class PipelineDefinition(object):
         )
 
         kv_properties = set()
-        parameter_info = canvas_pipeline_properties.get("uihints", {}).get("parameter_info", [])
-        for parameter in parameter_info:
-            if parameter.get("data", {}).get("keyValueEntries", False):
-                parameter_ref = parameter.get("parameter_ref", "")
-                if parameter_ref.startswith("elyra_"):
-                    parameter_ref = parameter_ref.replace("elyra_", "")
-                kv_properties.add(parameter_ref)
+        properties = canvas_pipeline_properties["properties"]["pipeline_defaults"]["properties"]
+        for prop_id, prop in properties.items():
+            if prop.get("uihints", {}).get("keyValueEntries", False):
+                kv_properties.add(prop_id)
 
         return kv_properties
 
