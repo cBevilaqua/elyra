@@ -103,6 +103,25 @@ setup_args = dict(
         # Airflow runtime dependencies
         "pygithub",
         "black<=21.12b0",  # Cap due to psf/black#2846
+        # Zoox required packages
+        "airflow-connections-manager==0.0.6",
+        "matplotlib",
+        "statsmodels",
+        "h2o",
+        "selenium",
+        "s3fs",
+        "sklearn",
+        "numpy",
+        "pandas",
+        "webdriver-manager",
+        "awswrangler",
+        "mprop==0.16.0",
+        "elasticsearch",
+        "psycopg2-binary==2.9.1",
+        "pymongo[srv]==3.11.3",
+        "pysqlite3==0.4.6",
+        "tzdata",
+        "beautifulsoup4==4.9.3",
     ],
     extras_require={
         "test": ["elyra-examples-kfp-catalog", "pytest", "pytest-tornasync"],

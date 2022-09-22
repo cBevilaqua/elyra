@@ -36,11 +36,24 @@ RUN python3 -m pip install -r requirements.txt && rm requirements.txt
 
 # Install component examples catalogs
 #  - this wail fail if the 'kfp-examples' pip extra is not installed
-RUN elyra-metadata create component-catalogs \
-    --schema_name=elyra-kfp-examples-catalog  \
-    --display_name="Kubeflow Pipelines examples" \
-    --runtime_type=KUBEFLOW_PIPELINES \
-    --categories="['examples']"
+#RUN elyra-metadata create component-catalogs \
+#    --schema_name=elyra-kfp-examples-catalog  \
+#    --display_name="Kubeflow Pipelines examples" \
+#    --runtime_type=KUBEFLOW_PIPELINES \
+#    --categories="['examples']"
+
+# switch to root to install linux packages
+USER root
+
+# Install Zoox required packages
+RUN apt-get update -y\
+  && apt-get install openssh-client -y\
+  && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb\
+  && apt-get install ./google-chrome-stable_current_amd64.deb -y\
+  && apt-get install default-jdk -y
+
+# switch to NB_USER again
+USER ${NB_USER}
 
 # Copy Elyra entrypoint
 COPY --chmod=0755 --chown=root:root start-elyra.sh /usr/local/bin/start-elyra.sh
