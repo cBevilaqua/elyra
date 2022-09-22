@@ -19,6 +19,7 @@ export NB_IP=${NB_IP:-0.0.0.0}
 export NB_PORT=${NB_PORT:-8888}
 export JUPYTER_ENABLE_LAB=true
 export KERNEL_USERNAME=${KERNEL_USERNAME:-${NB_USER}}
+export JUPYTER_TOKEN=${JUPYTER_TOKEN}
 
 echo "Kernel user: " ${KERNEL_USERNAME}
 echo "JupyterLab ip:" ${NB_IP}
@@ -27,4 +28,4 @@ echo "Gateway URL: " ${JUPYTER_GATEWAY_URL}
 
 echo "${@: -1}"
 
-exec /usr/local/bin/start-notebook.sh --ServerApp.tornado_settings="{'headers': {'Content-Security-Policy': 'frame-ancestors self *.zooxsmart.com ', }}" --port=${NB_PORT} --ip=${NB_IP}  $*
+exec /usr/local/bin/start-notebook.sh --ServerApp.tornado_settings="{'headers': {'Content-Security-Policy': 'frame-ancestors self *.zooxsmart.com ', }}" --ServerApp.token=${JUPYTER_TOKEN} --port=${NB_PORT} --ip=${NB_IP}  $*
