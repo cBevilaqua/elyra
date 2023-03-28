@@ -285,7 +285,6 @@ be fully qualified (i.e., prefixed with their package names).
         unique_operations = self._create_unique_node_names(scrubbed_operations)
 
         for operation in unique_operations:
-
             if isinstance(operation, GenericOperation):
                 operation_artifact_archive = self._get_dependency_archive_name(operation)
 
@@ -555,6 +554,8 @@ be fully qualified (i.e., prefixed with their package names).
 
                 autopep_output = autopep8.fix_code(python_output)
                 output_to_file = black.format_str(autopep_output, mode=black.FileMode())
+                # cristiano
+                output_to_file = output_to_file.replace('parameters="",', "")
 
                 fh.write(output_to_file)
 
@@ -797,7 +798,6 @@ be fully qualified (i.e., prefixed with their package names).
 
 
 class AirflowPipelineProcessorResponse(RuntimePipelineProcessorResponse):
-
     _type = RuntimeProcessorType.APACHE_AIRFLOW
     _name = "airflow"
 
